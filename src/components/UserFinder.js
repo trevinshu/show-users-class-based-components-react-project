@@ -1,15 +1,11 @@
-import { Fragment, Component } from 'react';
+import { Fragment, useState, useEffect, Component } from 'react';
 
 import Users from './Users';
 import classes from './UserFinder.module.css';
-
-const DUMMY_USERS = [
-  { id: 'u1', name: 'Max' },
-  { id: 'u2', name: 'Manuel' },
-  { id: 'u3', name: 'Julie' },
-];
+import UsersContext from '../store/users-context';
 
 class UserFinder extends Component {
+  static contextType = UsersContext;
   constructor() {
     super();
     this.state = {
@@ -19,22 +15,20 @@ class UserFinder extends Component {
   }
 
   componentDidMount() {
-    //Send HTTP request...
-    this.setState({ filteredUsers: DUMMY_USERS });
+    // Send http request...
+    this.setState({ filteredUsers: this.context.users });
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.searchTerm !== this.state.searchTerm) {
       this.setState({
-        filteredUsers: DUMMY_USERS.filter((user) => user.name.includes(this.state.searchTerm)),
+        filteredUsers: this.context.users.filter((user) => user.name.includes(this.state.searchTerm)),
       });
     }
   }
 
   searchChangeHandler(event) {
-    this.setState({
-      searchTerm: event.target.value,
-    });
+    this.setState({ searchTerm: event.target.value });
   }
 
   render() {
@@ -54,7 +48,9 @@ class UserFinder extends Component {
 //   const [searchTerm, setSearchTerm] = useState('');
 
 //   useEffect(() => {
-//     setFilteredUsers(DUMMY_USERS.filter((user) => user.name.includes(searchTerm)));
+//     setFilteredUsers(
+//       DUMMY_USERS.filter((user) => user.name.includes(searchTerm))
+//     );
 //   }, [searchTerm]);
 
 //   const searchChangeHandler = (event) => {
@@ -64,7 +60,7 @@ class UserFinder extends Component {
 //   return (
 //     <Fragment>
 //       <div className={classes.finder}>
-//         <input type="search" onChange={searchChangeHandler} />
+//         <input type='search' onChange={searchChangeHandler} />
 //       </div>
 //       <Users users={filteredUsers} />
 //     </Fragment>
